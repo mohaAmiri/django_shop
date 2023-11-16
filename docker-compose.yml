@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./core:/app
+    ports:
+      - "8000:8000"
+    container_name: django_shop_backend
+    environment:
+      - SECRET_KEY=test
+      - DEBUG=True
+      - ALLOWED_HOSTS=localhost,0.0.0.0
+    depends_on:
+      - db
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./core/postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=mohammad
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=ecommerce_db
+
+    container_name: django_shop_db
