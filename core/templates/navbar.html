@@ -1,0 +1,51 @@
+<nav class="navbar container-fluid navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{% url 'home:home' %}">
+        <i class="fa fa-home"></i>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="">products</a>
+            </li>
+            {% if user.is_authenticated %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="">Cart</a>
+                </li>
+
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        {{ user.first_name }}
+                    </button>
+                    <ul class="dropdown-menu">
+                        {#                        <li><a class="dropdown-item" href="{% url 'accounting:profile' %}">Profile</a></li>#}
+                        {#                        <li><a class="dropdown-item" href="{% url 'accounting:product-view' %}">last views</a></li>#}
+                        <li><a class="dropdown-item" href="{% url 'accounting:logout_user' %}">Logout</a></li>
+                    </ul>
+                </div>
+
+            {% else %}
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'accounting:register_user' %}">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounting:login_user' %}">Login</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    {#-----------------------search form-------------------------------#}
+    {#    <form class="mx-3" method="get" action="{% url 'home:products' %}">#}
+    {#        <input type="search" name="search">#}
+    {#        <button type="submit" class="btn btn-success">Search</button>#}
+    {#    </form>#}
+</nav>

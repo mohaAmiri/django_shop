@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Register
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'accounting/register.css' %}">
+{% endblock %}
+
+{% block body %}
+    <h1>Register</h1>
+    <form method="post">
+        {% csrf_token %}
+        username:<input type="text" name="username"><br>
+        <p>{{ form.username.errors }}</p>
+        first name:<input type="text" name="first_name"><br>
+        <p>{{ form.first_name.errors }}</p>
+
+        last name:<input type="text" name="last_name"><br>
+        <p>{{ form.last_name.errors }}</p>
+
+        email: <input type="email" name="email"><br>
+        <p>{{ form.email.errors }}</p>
+
+        password: <input type="password" name="password1"><br>
+        <p>{{ form.password1.errors }}</p>
+
+        confirm password: <input type="password" name="password2"><br>
+        <p>{{ form.password2.errors }}</p>
+
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
