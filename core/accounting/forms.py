@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 
+from accounting.models import Profile
+
 error = {
     'min_length': 'حداقل 5 کاراکتر باشد',
     'required': 'این فیلد اجباری است',
@@ -60,3 +62,15 @@ class LoginForm(forms.Form):
     username = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Enter Email'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'enter password'}))
     remember = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+
+
+class UpdateUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name']
+
+
+class UpdateProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['phone', 'address', 'profile_image']
