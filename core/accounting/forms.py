@@ -74,3 +74,11 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['phone', 'address', 'profile_image']
+
+
+class PhoneForm(forms.Form):
+    phone = forms.IntegerField()
+
+
+class CodeForm(forms.Form):
+    code = forms.IntegerField()

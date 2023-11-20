@@ -1,11 +1,14 @@
+from random import randint
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 
-from accounting.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
+from accounting.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, PhoneForm, CodeForm
 from accounting.models import Profile
 
 
@@ -101,3 +104,47 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'accounting/changePassword.html', {'form': form})
+
+
+def phone(request):
+    if request.method == 'POST':
+        form = PhoneForm(request.POST)
+        if form.is_valid():
+            global random_code, phone
+            data = form.cleaned_data
+            phone = f"0{data['phone']}"
+            random_code = randint(100, 1000)
+            print(random_code, phone)
+            # -------------kavenegar api for sending message ---------------------------
+            # api = KavenegarAPI(
+            #     '42563968306266646633697931444F2B35736D6B73724545316F4E58314931714F394171363934453369303D')
+            # params = {'sender': '10008663', 'receptor': phone, 'message': random_code}
+            # api.sms_send(params)
+            # ------------------------------------------------------------------------------
+            return redirect('accounting:verify')
+    else:
+        form = PhoneForm()
+    return render(request, 'accounting/phone_login.html', {'form': form})
+
+
+def verify(request):
+    if request.method == 'POST':
+        form = CodeForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            if random_code == data['code']:
+                try:
+                    profile = Profile.objects.get(phone=phone)
+                except ObjectDoesNotExist:
+                    messages.success(request, 'User with this phone number does not exist', 'danger')
+                    return redirect('accounting:phone_login')
+                print(profile)
+                user = User.objects.get(profile__id=profile.id)
+                login(request, user)
+                messages.success(request, 'successfully logged in', 'success')
+                return redirect('home:home')
+            else:
+                messages.success(request, 'the entered code is wrong', 'danger')
+    else:
+        form = CodeForm()
+    return render(request, 'accounting/verify.html', {'form': form})
