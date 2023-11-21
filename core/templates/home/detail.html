@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Detail
+{% endblock %}
+
+{% block body %}
+    <h1>{{ product.name }}</h1>
+    {#    ------------------------------------------------------------------------------------------------#}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 250px"><br>
+    <p>{{ product.information | safe }}</p>
+    <small>price: {{ product.total_price }}</small><br>
+{% endblock %}

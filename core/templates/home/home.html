@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
     <h1>This is home</h1>
+    {% for i in category %}
+        <a href="{{ i.get_absolute_url }}">
+            <h1>{{ i.name }}</h1>
+        </a>
+        <img src="{{ i.image.url }}" style="width: 300px; height:300px;" alt="{{ i.name }}">
+    {% endfor %}
 {% endblock %}

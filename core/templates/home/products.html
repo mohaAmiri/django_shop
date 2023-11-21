@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}
+    Products
+{% endblock %}
+
+{% block body %}
+
+    {% for data in category %}
+        <!-- Example single danger button -->
+        <div class="btn-group">
+            <a href="{{ data.get_absolute_url }}">{{ data.name }}</a>
+            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu">
+                {% for info in data.sub.all %}
+                    <li><a class="dropdown-item" href="{{ info.get_absolute_url }}">{{ info.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4">
+                <h1>{{ product.name }}</h1>
+                <a href="{% url 'home:product-detail' product.id %}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 200px;"><br>
+                </a>
+                {% if product.discount %}
+                    Price:
+                    <small style="text-decoration: line-through">{{ product.unit_price|intcomma:False }}</small>
+                    <br>
+                    Price with discount: <small>{{ product.total_price|intcomma:False }}</small>
+                {% else %}
+                    Price:<small>{{ product.total_price|intcomma:False }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
