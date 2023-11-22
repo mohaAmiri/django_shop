@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from home.models import Category, Product
+from home.models import Category, Product, Variants
 
 
 def home(request):
@@ -19,5 +19,17 @@ def all_products(request, slug=None, id=None):
 
 def product_detail(request, id):
     product = get_object_or_404(Product, id=id)
-    context = {'product': product}
-    return render(request, 'home/detail.html', context)
+    if product.status is not None:
+        if request.method == 'POST':
+            variant = Variants.objects.filter(product_variant_id=id)
+            var_id = request.POST.get('select')
+            selected_variant = Variants.objects.get(id=var_id)
+        else:
+            variant = Variants.objects.filter(product_variant_id=id)
+            selected_variant = Variants.objects.get(id=variant[0].id)
+        context = {'product': product, 'variant': variant, 'selected_variant': selected_variant}
+        return render(request, 'home/detail.html', context)
+    else:
+        context = {'product': product}
+        print(product.status)
+        return render(request, 'home/detail.html', context)

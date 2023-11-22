@@ -22,6 +22,11 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    VARIANT = (
+        ('Size', 'size'),
+        ('Color', 'color'),
+        ('Both', 'Both'),
+    )
     category = models.ManyToManyField(Category, blank=True)
     name = models.CharField(max_length=200)
     amount = models.PositiveIntegerField()
@@ -33,6 +38,7 @@ class Product(models.Model):
     update = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='products')
     available = models.BooleanField(default=True)
+    status = models.CharField(null=True, blank=True, max_length=200, choices=VARIANT)
 
     def __str__(self):
         return self.name
@@ -47,3 +53,39 @@ class Product(models.Model):
         return self.total_price
 
 
+class Size(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Color(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Variants(models.Model):
+    name = models.CharField(max_length=100)
+    update = models.DateTimeField(auto_now=True)
+    product_variant = models.ForeignKey(Product, on_delete=models.CASCADE)
+    size_variant = models.ForeignKey(Size, on_delete=models.CASCADE, blank=True, null=True)
+    color_variant = models.ForeignKey(Color, on_delete=models.CASCADE, blank=True, null=True)
+    amount = models.PositiveIntegerField()
+    unit_price = models.PositiveIntegerField()
+    discount = models.PositiveIntegerField(blank=True, null=True)
+    total_price = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def total_price(self):
+        if not self.discount:
+            return self.unit_price
+        elif self.discount:
+            total = (self.discount * self.unit_price) / 100
+            return int(self.unit_price - total)
+        return self.total_price

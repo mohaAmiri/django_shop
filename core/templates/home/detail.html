@@ -6,8 +6,38 @@
 
 {% block body %}
     <h1>{{ product.name }}</h1>
-    {#    ------------------------------------------------------------------------------------------------#}
     <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 250px"><br>
     <p>{{ product.information | safe }}</p>
-    <small>price: {{ product.total_price }}</small><br>
+
+    {% if product.status == None %}
+        <small>price: {{ product.total_price }}</small><br>
+    {% else %}
+        {#  ------------------  variants  -------------------  #}
+        {% if product.status == 'Size' %}
+            <form method="post">
+                {% csrf_token %}
+                {% for data in variant %}
+                    <input type="radio" name="select" value="{{ data.id }}"
+                           {% if data.id == selected_variant.id %}checked{% endif %}
+                           onchange="this.form.submit();"/>
+                    <a style="text-decoration: none">{{ data.size_variant }}</a>
+                {% endfor %}
+            </form>
+        {% elif product.status == 'Color' %}
+            <form method="post">
+                {% csrf_token %}
+                {% for data in variant %}
+                    <input type="radio" name="select" value="{{ data.id }}"
+                           {% if data.id == selected_variant.id %}checked{% endif %}
+                           onchange="this.form.submit();"/>
+                    <a style="text-decoration: none">{{ data.color_variant }}</a>
+                {% endfor %}
+            </form>
+        {% endif %}
+        {#    ------------------------------variant price----------------------------#}
+        <div class="card p-3 bg-success m-2">
+            <h4>Your choice Price: {{ selected_variant.total_price }}</h4>
+        </div>
+    {% endif %}
+
 {% endblock %}
