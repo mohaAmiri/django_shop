@@ -1,6 +1,7 @@
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 class Category(models.Model):
@@ -39,6 +40,8 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products')
     available = models.BooleanField(default=True)
     status = models.CharField(null=True, blank=True, max_length=200, choices=VARIANT)
+    # ---------------------similar object------------------------
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return self.name

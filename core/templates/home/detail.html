@@ -39,5 +39,11 @@
             <h4>Your choice Price: {{ selected_variant.total_price }}</h4>
         </div>
     {% endif %}
-
+    {#        ---------------------------------------for similar objects-------------------------------------------#}
+    <hr>
+    {% for tag in similar %}
+        <a href="{% url 'home:product-detail' tag.id %}">
+            <img src="{{ tag.image.url }}" alt="{{ tag.name }}" style="height: 100px; width: 100px">
+        </a>
+    {% endfor %}
 {% endblock %}

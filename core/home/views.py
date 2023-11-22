@@ -19,6 +19,8 @@ def all_products(request, slug=None, id=None):
 
 def product_detail(request, id):
     product = get_object_or_404(Product, id=id)
+    # --------------------------similar object---------------------
+    similar = product.tags.similar_objects()[:2]
     if product.status is not None:
         if request.method == 'POST':
             variant = Variants.objects.filter(product_variant_id=id)
@@ -27,9 +29,8 @@ def product_detail(request, id):
         else:
             variant = Variants.objects.filter(product_variant_id=id)
             selected_variant = Variants.objects.get(id=variant[0].id)
-        context = {'product': product, 'variant': variant, 'selected_variant': selected_variant}
+        context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar}
         return render(request, 'home/detail.html', context)
     else:
-        context = {'product': product}
-        print(product.status)
+        context = {'product': product, 'similar': similar}
         return render(request, 'home/detail.html', context)

@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'ckeditor',
     'ckeditor_uploader',
+    'taggit',
     'accounting.apps.AccountingConfig',
     'home.apps.HomeConfig'
 ]
@@ -104,3 +105,5 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'full',
     },
 }
+""" Taggit """
+TAGGIT_CASE_INSENSITIVE = True
