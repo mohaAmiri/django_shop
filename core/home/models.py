@@ -1,6 +1,7 @@
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg
 from django.forms import ModelForm
 from django.urls import reverse
 from taggit.managers import TaggableManager
@@ -67,6 +68,15 @@ class Product(models.Model):
 
     def total_unlike(self):
         return self.unlike.count()
+
+    # ---------------aggregate > for average of rates------------------
+
+    def average(self):
+        data = Comment.objects.filter(is_reply=False, product=self).aggregate(avg=Avg('rate'))
+        star = 0
+        if data['avg'] is not None:
+            star = round(data['avg'], 1)
+        return star
 
 
 class Size(models.Model):

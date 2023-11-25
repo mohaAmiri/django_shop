@@ -1,6 +1,8 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 
+from home.forms import SearchForm
 from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery
 
 
@@ -10,12 +12,19 @@ def home(request):
 
 
 def all_products(request, slug=None, id=None):
-    products = Product.objects.filter(available=True)
+    page_object = Product.objects.filter(available=True)  # products
     category = Category.objects.filter(sub_cat=False)
+    # --------------------search with get------------------------------
+    if 'search' in request.GET:
+        form = SearchForm(request.GET, use_required_attribute=False)
+        if form.is_valid():
+            data_search = form.cleaned_data['search']
+            page_object = Product.objects.filter(Q(name__icontains=data_search) | Q(information__icontains=data_search))
+    # ----------------------------------------------------------------------
     if slug and id:
         selected_cat = get_object_or_404(Category, slug=slug, id=id)
-        products = Product.objects.filter(category=selected_cat, available=True)
-    return render(request, 'home/products.html', {'products': products, 'category': category, })
+        page_object = Product.objects.filter(category=selected_cat, available=True)
+    return render(request, 'home/products.html', {'products': page_object, 'category': category})
 
 
 def product_detail(request, id):
@@ -116,3 +125,16 @@ def comment_like(request, id):
     else:
         comment.comment_like.add(request.user)
     return redirect(url)
+
+
+def search_product(request):
+    products = Product.objects.all()
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data['search']
+            if data.isdigit():
+                products = Product.objects.filter(Q(unit_price__exact=data) | Q(discount__exact=data))
+            else:
+                products = Product.objects.filter(Q(name__icontains=data) | Q(information__icontains=data))
+            return render(request, 'home/products.html', {'products': products, 'form': form})

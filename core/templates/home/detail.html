@@ -8,7 +8,9 @@
     <h1>{{ product.name }}</h1>
     <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 250px"><br>
     <p>{{ product.information | safe }}</p>
-
+    {#    -------------------------------aggregate for average--------------------------------------------#}
+    <h4>Rate:{{ product.average }}</h4><br>
+    {#    ------------------------------------------------------------------------------------------------#}
     {% if product.status == None %}
         <small>price: {{ product.total_price }}</small><br>
     {% else %}
