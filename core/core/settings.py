@@ -2,6 +2,7 @@ from pathlib import Path
 import accounting.apps
 import cart.apps
 import home.apps
+import order.apps
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +25,8 @@ INSTALLED_APPS = [
     'taggit',
     'accounting.apps.AccountingConfig',
     'home.apps.HomeConfig',
-    'cart.apps.CartConfig'
+    'cart.apps.CartConfig',
+    'order.apps.OrderConfig'
 ]
 
 MIDDLEWARE = [

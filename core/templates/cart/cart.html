@@ -64,5 +64,26 @@
                 </tbody>
             </table>
         </div>
+        {#    -------------------------------------- order form ---------------------------------#}
+        <div class="row">
+            <form action="{% url 'order:order-create' %}" method="post">
+                {% csrf_token %}
+                <div class="card col-md-4 p-2">
+                    <label for="">Email:
+                        <input type="email" name="email" value="{{ user.email }}" required>
+                    </label>
+                    <label for="">First Name:
+                        <input type="text" name="f_name" value="{{ user.first_name }}" required>
+                    </label>
+                    <label for="">Last Name:
+                        <input type="text" name="l_name" value="{{ user.last_name }}" required>
+                    </label>
+                    <label for="">Address:
+                        <input type="text" name="address" value="{{ user.profile.address }}" required>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-outline-success">Order</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

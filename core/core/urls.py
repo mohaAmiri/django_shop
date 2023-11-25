@@ -8,6 +8,7 @@ urlpatterns = [
                   path('', include('home.urls', namespace='home')),
                   path('accounting/', include('accounting.urls', namespace='accounting')),
                   path('cart/', include('cart.urls', namespace='cart')),
+                  path('order/', include('order.urls', namespace='order')),
                   path('ckeditor/', include('ckeditor_uploader.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                                            document_root=settings.MEDIA_ROOT)

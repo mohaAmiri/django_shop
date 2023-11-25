@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block body %}
+
+    <div class="container">
+        <h1>Order</h1>
+        <h4>total price: {{ order.order_price }}</h4>
+{#        <form action="{% url 'order:coupon-add' order.id %}" method="post">#}
+{#            {% csrf_token %}#}
+{#            {{ form }}#}
+{#            <button type="submit" class="btn btn-success">Add</button>#}
+{#        </form>#}
+    </div>
+{% endblock %}
