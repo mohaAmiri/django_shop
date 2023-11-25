@@ -39,6 +39,26 @@
             <h4>Your choice Price: {{ selected_variant.total_price }}</h4>
         </div>
     {% endif %}
+    {#    ---------------------------------like-----------------------------------------------------------#}
+    {% if request.user.is_authenticated %}
+        {% if is_like %}
+            <a class="btn btn-warning" href="{% url 'home:like' product.id %}">undo Like</a>
+        {% else %}
+            <a class="btn btn-success{% if is_unlike %} disabled {% endif %}" href="{% url 'home:like' product.id %}">Like</a>
+        {% endif %}
+
+        {% if is_unlike %}
+            <a class="btn btn-primary" href="{% url 'home:unlike' product.id %}">undo
+                unLike</a>
+        {% else %}
+            <a class="btn btn-danger{% if is_like %} disabled {% endif %}" href="{% url 'home:unlike' product.id %}">unLike</a>
+        {% endif %}
+
+    {% endif %}
+
+    Likes: <small>{{ product.total_like }}</small>
+    unLikes: <small>{{ product.total_unlike }}</small>
+    <hr>
     {#        ---------------------------------------for similar objects-------------------------------------------#}
     <hr>
     {% for tag in similar %}
