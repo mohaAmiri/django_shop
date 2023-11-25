@@ -1,5 +1,6 @@
 from pathlib import Path
 import accounting.apps
+import cart.apps
 import home.apps
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +23,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'taggit',
     'accounting.apps.AccountingConfig',
-    'home.apps.HomeConfig'
+    'home.apps.HomeConfig',
+    'cart.apps.CartConfig'
 ]
 
 MIDDLEWARE = [

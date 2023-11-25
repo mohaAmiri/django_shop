@@ -16,7 +16,7 @@
             {% if user.is_authenticated %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">Cart</a>
+                    <a class="nav-link" href="{% url 'cart:cart-detail' %}">Cart</a>
                 </li>
 
                 <div class="dropdown">
@@ -44,8 +44,8 @@
     </div>
 
     -----------------------search form-------------------------------
-        <form class="mx-3" method="get" action="{% url 'home:products' %}">
-            <input type="search" name="search">
-            <button type="submit" class="btn btn-success">Search</button>
-        </form>
+    <form class="mx-3" method="get" action="{% url 'home:products' %}">
+        <input type="search" name="search">
+        <button type="submit" class="btn btn-success">Search</button>
+    </form>
 </nav>

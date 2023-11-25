@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}
+    Cart
+{% endblock %}
+{% block body %}
+    <h1>Cart</h1>
+    <div class="container">
+        <div class="row">
+            <table class="table table-dark table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">image</th>
+                    <th scope="col">product</th>
+                    <th scope="col">size</th>
+                    <th scope="col">color</th>
+                    <th scope="col">price</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">total price</th>
+                    <th scope="col">remove</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for c in cart %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>
+                            <a href="{% url 'home:product-detail' c.product.id %}">
+                                <img src="{{ c.product.image.url }}" alt="{{ c.product.name }}" style="width: 100px">
+                            </a>
+                        </td>
+                        <td>{{ c.product.name }}</td>
+                        <td>{{ c.variant.size_variant.name | default:'-' }}</td>
+                        <td>{{ c.variant.color_variant.name | default:'-' }}</td>
+                        <td>
+                            {% if c.product.status != None %}
+                                {{ c.variant.total_price }}
+                            {% else %}
+                                {{ c.product.total_price }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'cart:remove-single' c.id %}"><i class="fa fa-minus"></i></a>
+                            {{ c.quantity }}
+                            <a href="{% url 'cart:add-single' c.id %}"><i class="fa fa-plus"></i></a>
+                        </td>
+                        <td>
+                            {% if c.product.status != None %}
+                                {% widthratio c.variant.total_price 1 c.quantity %}
+                            {% else %}
+                                {% widthratio c.product.total_price 1 c.quantity %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'cart:remove-cart' c.id %}"><i style="color:red;"
+                                                                           class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="7">Total:</td>
+                    <td>{{ total }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

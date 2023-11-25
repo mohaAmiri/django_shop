@@ -65,6 +65,30 @@
 
     Likes: <small>{{ product.total_like }}</small>
     unLikes: <small>{{ product.total_unlike }}</small>
+
+    {#    -----------------------------------------------------cart--------------------------------------------------#}
+    <div class="card p-3 m-3">
+        {% if product.status != None %}
+
+            <form action="{% url 'cart:add-cart' product.id %}" method="post">
+                {% csrf_token %}
+                <input type="number" name="quantity" min="1" max="{{ selected_variant.amount }}" value="1" required
+                       oninvalid="setCustomValidity('تعداد باید حداکثر{{ selected_variant.amount }} باشد')">
+                <input type="hidden" value="{{ selected_variant.id }}" name="select">
+                <button type="submit" class="btn btn-success">Add to cart</button>
+            </form>
+
+        {% else %}
+            <form action="{% url 'cart:add-cart' product.id %}" method="post">
+                {% csrf_token %}
+                <input type="number" name="quantity" min="1" max="{{ product.amount }}" value="1" required
+                       oninvalid="setCustomValidity('تعداد باید حداکثر{{ product.amount }} باشد')">
+                <button type="submit" class="btn btn-success">Add to cart</button>
+            </form>
+
+        {% endif %}
+    </div>
+
     {#        ---------------------------------------for similar objects-------------------------------------------#}
     <hr>
     {% for tag in similar %}

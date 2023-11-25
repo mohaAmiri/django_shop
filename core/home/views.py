@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 
+from cart.models import CartForm
 from home.forms import SearchForm
 from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery
 
@@ -41,6 +42,8 @@ def product_detail(request, id):
     is_unlike = False
     if product.unlike.filter(id=request.user.id).exists():
         is_unlike = True
+    # --------------------------------cart----------------------------
+    cart_form = CartForm()
     # --------------------------------comment-------------------------
     comment_form = CommentForm()
     comments = Comment.objects.filter(product_id=id, is_reply=False)
@@ -56,11 +59,12 @@ def product_detail(request, id):
             selected_variant = Variants.objects.get(id=variant[0].id)
         context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar,
                    'is_like': is_like, 'is_unlike': is_unlike, 'comment_form': comment_form, 'comments': comments,
-                   'reply_form': reply_form, 'gallery': gallery}
+                   'reply_form': reply_form, 'gallery': gallery, 'cartForm': cart_form}
         return render(request, 'home/detail.html', context)
     else:
         context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike,
-                   'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form, 'gallery': gallery}
+                   'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form, 'gallery': gallery,
+                   'cartForm': cart_form}
         return render(request, 'home/detail.html', context)
 
 
