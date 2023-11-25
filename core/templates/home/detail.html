@@ -39,6 +39,11 @@
             <h4>Your choice Price: {{ selected_variant.total_price }}</h4>
         </div>
     {% endif %}
+    {#    -------------------------------------photo gallery----------------------------------------------#}
+    {% for img in gallery %}
+        <img src="{{ img.image.url }}" alt="{{ img.image.url }}" style="width: 150px; height: 150px">
+    {% endfor %}
+    <br>
     {#    ---------------------------------like-----------------------------------------------------------#}
     {% if request.user.is_authenticated %}
         {% if is_like %}

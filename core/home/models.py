@@ -136,3 +136,9 @@ class ReplyForm(ModelForm):
     class Meta:
         model = Comment
         fields = ['comment']
+
+
+class PhotoGallery(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    image = models.ImageField(upload_to='gallery', blank=True, null=True)

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 
-from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm
+from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery
 
 
 def home(request):
@@ -22,6 +22,8 @@ def product_detail(request, id):
     product = get_object_or_404(Product, id=id)
     # --------------------------similar object---------------------
     similar = product.tags.similar_objects()[:2]
+    # -----------------------------photo gallery---------------------
+    gallery = PhotoGallery.objects.filter(product_id=id)
     # ------------------------------like---------------------------
     is_like = False
     if product.like.filter(id=request.user.id).exists():
@@ -45,11 +47,11 @@ def product_detail(request, id):
             selected_variant = Variants.objects.get(id=variant[0].id)
         context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar,
                    'is_like': is_like, 'is_unlike': is_unlike, 'comment_form': comment_form, 'comments': comments,
-                   'reply_form': reply_form}
+                   'reply_form': reply_form, 'gallery': gallery}
         return render(request, 'home/detail.html', context)
     else:
         context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike,
-                   'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form}
+                   'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form, 'gallery': gallery}
         return render(request, 'home/detail.html', context)
 
 

@@ -1,6 +1,7 @@
+import admin_thumbnails
 from django.contrib import admin
 
-from home.models import Category, Product, Variants, Color, Size
+from home.models import Category, Product, Variants, Color, Size, PhotoGallery
 
 
 class ProductVariantInlines(admin.TabularInline):
@@ -16,11 +17,17 @@ class CategoryAdmin(admin.ModelAdmin):
     }
 
 
+@admin_thumbnails.thumbnail('image')
+class PhotoGalleryInline(admin.TabularInline):
+    model = PhotoGallery
+    extra = 2
+
+
 @admin.register(Product)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'amount', 'unit_price', 'discount', 'total_price', 'available']
     raw_id_fields = ('category',)
-    inlines = [ProductVariantInlines]
+    inlines = [ProductVariantInlines, PhotoGalleryInline]
 
 
 @admin.register(Variants)
