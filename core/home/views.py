@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 
-from home.models import Category, Product, Variants
+from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm
 
 
 def home(request):
@@ -30,7 +30,11 @@ def product_detail(request, id):
     is_unlike = False
     if product.unlike.filter(id=request.user.id).exists():
         is_unlike = True
-    # --------------------------------------------------------------
+    # --------------------------------comment-------------------------
+    comment_form = CommentForm()
+    comments = Comment.objects.filter(product_id=id, is_reply=False)
+    reply_form = ReplyForm()
+    # -----------------------------------------------------------------
     if product.status is not None:
         if request.method == 'POST':
             variant = Variants.objects.filter(product_variant_id=id)
@@ -40,10 +44,12 @@ def product_detail(request, id):
             variant = Variants.objects.filter(product_variant_id=id)
             selected_variant = Variants.objects.get(id=variant[0].id)
         context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar,
-                   'is_like': is_like, 'is_unlike': is_unlike}
+                   'is_like': is_like, 'is_unlike': is_unlike, 'comment_form': comment_form, 'comments': comments,
+                   'reply_form': reply_form}
         return render(request, 'home/detail.html', context)
     else:
-        context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike}
+        context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike,
+                   'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form}
         return render(request, 'home/detail.html', context)
 
 
@@ -72,4 +78,39 @@ def product_unlike(request, id):
     else:
         product.unlike.add(request.user)
         is_unlike = True
+    return redirect(url)
+
+
+def product_comment(request, id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            data = comment_form.cleaned_data
+            Comment.objects.create(comment=data['comment'], rate=data['rate'], user_id=request.user.id, product_id=id)
+            return redirect(url)
+        else:
+            return redirect(url)
+
+
+def reply_comment(request, id, comment_id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        reply_form = ReplyForm(request.POST)
+        if reply_form.is_valid():
+            data = reply_form.cleaned_data
+            Comment.objects.create(comment=data['comment'], user_id=request.user.id, product_id=id,
+                                   reply_id=comment_id, is_reply=True)
+            return redirect(url)
+        else:
+            return redirect(url)
+
+
+def comment_like(request, id):
+    url = request.META.get('HTTP_REFERER')
+    comment = Comment.objects.get(id=id)
+    if comment.comment_like.filter(id=request.user.id).exists():
+        comment.comment_like.remove(request.user)
+    else:
+        comment.comment_like.add(request.user)
     return redirect(url)

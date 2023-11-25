@@ -58,12 +58,52 @@
 
     Likes: <small>{{ product.total_like }}</small>
     unLikes: <small>{{ product.total_unlike }}</small>
-    <hr>
     {#        ---------------------------------------for similar objects-------------------------------------------#}
     <hr>
     {% for tag in similar %}
         <a href="{% url 'home:product-detail' tag.id %}">
             <img src="{{ tag.image.url }}" alt="{{ tag.name }}" style="height: 100px; width: 100px">
         </a>
+    {% endfor %}
+    <hr>
+    {#--------------------------------------------------------comments---------------------------------------------#}
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'home:comment' product.id %}">
+            {% csrf_token %}
+            <textarea name="comment" cols="150" rows="3"></textarea><br>
+            Rating: <input type="number" min="1" max="5" name="rate" value="1"><br>
+            <button class="btn btn-success" type="submit">Send Comment</button>
+        </form>
+    {% endif %}
+
+    <br>
+
+
+    {% for com in comments %}
+        <div class="card p-2 m-1 rounded-3" style="background-color: lightblue">
+            <div class="p-2 m-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'home:comment-like' com.id %}"><i class="fa fa-thumbs-up" style="color: green"></i></a>
+                    likes:&nbsp;<small>{{ com.total_like }}</small>
+                {% endif %}
+            </div>
+            <h3>{{ com.user.username }}</h3>
+            <p>{{ com.comment }}</p>
+            <small>rate: {{ com.rate }}</small>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'home:reply-comment' product.id com.id %}">
+                    {% csrf_token %}
+                    <textarea name="comment" class="rounded-3 m-2 p-2" cols="80" rows="2"></textarea><br>
+                    <button class="btn btn-success" type="submit">Send reply</button>
+                </form>
+            {% endif %}
+            {% for data in com.comment_reply_sub.all %}
+                <div class="card p-2 m-2">
+                    <h6>{{ data.user.username }}</h6>
+                    <p>{{ data.comment }}</p>
+                </div>
+            {% endfor %}
+
+        </div>
     {% endfor %}
 {% endblock %}
