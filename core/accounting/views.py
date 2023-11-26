@@ -229,3 +229,20 @@ def favorite(request):
 def history(request):
     data = Order.objects.filter(user_id=request.user.id)
     return render(request, 'accounting/history.html', {'orders': data})
+
+
+def contact(request):
+    if request.method == 'POST':
+        subject = request.POST['subject']
+        email = request.POST['email']
+        message = request.POST['message']
+        body = subject + '\n' + email + '\n' + message
+        form = EmailMessage(
+            'contact form',
+            body,
+            'test',
+            ('dmoha1985@gmail.com',),  # this is supporting email
+        )
+        form.send(fail_silently=False)
+        messages.success(request, 'Message sent successfully', 'success')
+    return render(request, 'accounting/contact.html')

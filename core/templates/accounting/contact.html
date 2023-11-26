@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block body %}
+    <h1>Contact us</h1>
+    <form action="{% url 'accounting:contact' %}" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" name="subject" class="form-control" placeholder="subject">
+            </div>
+            <div class="col-md-6">
+                <input type="email" name="email" class="form-control" placeholder="email">
+            </div>
+        </div>
+        <div class="row my-3">
+            <textarea name="message" class="form-control" cols="100" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Send</button>
+    </form>
+{% endblock %}
