@@ -48,7 +48,11 @@ def product_detail(request, id):
     comment_form = CommentForm()
     comments = Comment.objects.filter(product_id=id, is_reply=False)
     reply_form = ReplyForm()
-    # -----------------------------------------------------------------
+    # -----------------------------favorite section---------------------------
+    is_favorite = False
+    if product.favorite.filter(id=request.user.id).exists():
+        is_favorite = True
+
     if product.status is not None:
         if request.method == 'POST':
             variant = Variants.objects.filter(product_variant_id=id)
@@ -59,12 +63,12 @@ def product_detail(request, id):
             selected_variant = Variants.objects.get(id=variant[0].id)
         context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar,
                    'is_like': is_like, 'is_unlike': is_unlike, 'comment_form': comment_form, 'comments': comments,
-                   'reply_form': reply_form, 'gallery': gallery, 'cartForm': cart_form}
+                   'reply_form': reply_form, 'gallery': gallery, 'cartForm': cart_form, 'is_favorite': is_favorite}
         return render(request, 'home/detail.html', context)
     else:
         context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike,
                    'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form, 'gallery': gallery,
-                   'cartForm': cart_form}
+                   'cartForm': cart_form, 'is_favorite': is_favorite}
         return render(request, 'home/detail.html', context)
 
 
@@ -142,3 +146,20 @@ def search_product(request):
             else:
                 products = Product.objects.filter(Q(name__icontains=data) | Q(information__icontains=data))
             return render(request, 'home/products.html', {'products': products, 'form': form})
+
+
+def favorite(request, product_id):
+    url = request.META.get('HTTP_REFERER')
+    product = Product.objects.get(id=product_id)
+    is_favorite = False
+    if product.favorite.filter(id=request.user.id).exists():
+        product.favorite.remove(request.user)
+        product.total_favorites -= 1
+        product.save()
+        is_favorite = False
+    else:
+        product.favorite.add(request.user)
+        product.total_favorites += 1
+        product.save()
+        is_favorite = True
+    return redirect(url)

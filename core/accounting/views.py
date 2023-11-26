@@ -217,4 +217,8 @@ class ConfirmPassword(auth_views.PasswordResetConfirmView):
 class Complete(auth_views.PasswordResetCompleteView):
     template_name = 'accounting/complete.html'
 
+
 # ------------------------------------------------------------------------------------
+def favorite(request):
+    product = request.user.fa_user.all()
+    return render(request, 'accounting/favorites.html', {'products': product})
