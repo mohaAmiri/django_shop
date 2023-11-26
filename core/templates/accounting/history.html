@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block body %}
+    <h1>history</h1>
+    {% for order in orders %}
+        <h1>{{ order.create }}</h1>
+        {% for order_item in order.order_sub.all %}
+            <h3>{{ order_item.product }}</h3>
+            <img src="{{ order_item.product.image.url }}" style="height: 200px; width: 200px">
+        {% endfor %}
+        <hr>
+    {% endfor %}
+
+{% endblock %}

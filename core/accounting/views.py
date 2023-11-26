@@ -19,8 +19,10 @@ from six import text_type
 from accounting.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, PhoneForm, CodeForm
 from accounting.models import Profile
 
-
 # ---------------------verification account with email---------------------
+from order.models import ItemOrder, Order
+
+
 class EmailToken(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (text_type(user.is_active) + text_type(user.id) + text_type(timestamp))
@@ -222,3 +224,8 @@ class Complete(auth_views.PasswordResetCompleteView):
 def favorite(request):
     product = request.user.fa_user.all()
     return render(request, 'accounting/favorites.html', {'products': product})
+
+
+def history(request):
+    data = Order.objects.filter(user_id=request.user.id)
+    return render(request, 'accounting/history.html', {'orders': data})
