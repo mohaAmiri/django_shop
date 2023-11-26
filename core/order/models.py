@@ -14,12 +14,17 @@ class Order(models.Model):
     f_name = models.CharField(max_length=300)
     l_name = models.CharField(max_length=300)
     address = models.CharField(max_length=1000)
+    # ----------------------------discount system------------------
+    discount = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.user.username
 
     def order_price(self):
         total = sum(i.price() for i in self.order_sub.all())
+        if self.discount:
+            discount_price = (self.discount / 100) * total
+            return int(total - discount_price)
         return total
 
 
@@ -50,3 +55,14 @@ class OrderForm(ModelForm):
     class Meta:
         model = Order
         fields = ['email', 'f_name', 'l_name', 'address']
+
+
+class Coupon(models.Model):
+    code = models.CharField(max_length=100, unique=True)
+    active = models.BooleanField(default=False)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    discount = models.IntegerField()
+
+    def __str__(self):
+        return self.code
