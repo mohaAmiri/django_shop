@@ -111,3 +111,11 @@ CKEDITOR_CONFIGS = {
 }
 """ Taggit """
 TAGGIT_CASE_INSENSITIVE = True
+
+""" Sending Email Configs """
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'amirimohammad117@gmail.com'
+EMAIL_HOST_PASSWORD = 'evkqsnpwdpfjzsfy'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

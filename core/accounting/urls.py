@@ -11,4 +11,6 @@ urlpatterns = [
     path('changepass/', views.change_password, name='change-password'),
     path('login_phone/', views.phone, name='phone_login'),
     path('verify/', views.verify, name='verify'),
+    path('active/<uidb64>/<token>/', views.RegisterEmail.as_view(), name='active-account'),
+
 ]

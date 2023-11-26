@@ -5,11 +5,42 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views import View
+from six import text_type
 
 from accounting.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, PhoneForm, CodeForm
 from accounting.models import Profile
+
+
+# ---------------------verification account with email---------------------
+class EmailToken(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return (text_type(user.is_active) + text_type(user.id) + text_type(timestamp))
+
+
+email_generator = EmailToken()
+
+
+class RegisterEmail(View):
+    def get(self, request, uidb64, token):
+        id = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(id=id)
+        if user and email_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            messages.success(request, 'User successfully activated!', 'success')
+            return redirect('accounting:login_user')
+
+
+# -------------------------------------------------------------------------
 
 
 def register_user(request):
@@ -24,8 +55,25 @@ def register_user(request):
                 last_name=data['last_name'],
                 email=data['email'],
                 password=data['password1'])
-            user.is_active = True
+            user.is_active = False
             user.save()
+            # ----------------activation email-----------
+            domain = get_current_site(request).domain
+            uidb64 = urlsafe_base64_encode(force_bytes(user.id))
+            url = reverse('accounting:active-account',
+                          kwargs={'uidb64': uidb64, 'token': email_generator.make_token(user)})
+            link = 'http://' + domain + url
+            # ----------------sending email--------------
+            email = EmailMessage(
+                'active user',  # title of email
+                link,  # content of email
+                'test<amirimohammad117@gmail.com>',  # name of email
+                [data['email']],  # the email address which we want to send email
+            )
+            email.send(fail_silently=False)
+            # --------------------------------------------
+            messages.success(request, 'email sent', 'success')
+            return redirect('home:home')
     else:
         form = RegisterForm()
     return render(request, 'accounting/register.html', {'form': form})
