@@ -10,6 +10,7 @@
         remember me: {{ form.remember }}<br>
         <button class="btn btn-success" type="submit">Login</button>
     </form>
-    <a href="">رمز عبور خود را فراموش کرده اید؟</a><br>
+    <a href="{% url 'accounting:reset' %}">رمز عبور خود را فراموش کرده اید؟</a>
+    <br>
     <a href="{% url 'accounting:phone_login' %}">ورود با رمز یکبار مصرف</a>
 {% endblock %}

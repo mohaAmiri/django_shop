@@ -1,5 +1,5 @@
 from random import randint
-
+from django.contrib.auth import views as auth_views
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -10,7 +10,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
@@ -196,3 +196,25 @@ def verify(request):
     else:
         form = CodeForm()
     return render(request, 'accounting/verify.html', {'form': form})
+
+
+# --------------------------------password Change------------------------------------
+class ResetPassword(auth_views.PasswordResetView):
+    template_name = 'accounting/reset.html'
+    success_url = reverse_lazy('accounting:reset-done')
+    email_template_name = 'accounting/link.html'
+
+
+class DonePassword(auth_views.PasswordResetDoneView):
+    template_name = 'accounting/done.html'
+
+
+class ConfirmPassword(auth_views.PasswordResetConfirmView):
+    template_name = 'accounting/confirm.html'
+    success_url = reverse_lazy('accounting:complete')
+
+
+class Complete(auth_views.PasswordResetCompleteView):
+    template_name = 'accounting/complete.html'
+
+# ------------------------------------------------------------------------------------
