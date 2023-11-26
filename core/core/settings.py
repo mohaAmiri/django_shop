@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'taggit',
+    'sorl.thumbnail',
     'accounting.apps.AccountingConfig',
     'home.apps.HomeConfig',
     'cart.apps.CartConfig',
