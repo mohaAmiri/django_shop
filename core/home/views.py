@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -13,19 +14,31 @@ def home(request):
 
 
 def all_products(request, slug=None, id=None):
-    page_object = Product.objects.filter(available=True)  # products
+    products = Product.objects.filter(available=True)  # products
     category = Category.objects.filter(sub_cat=False)
+    # ----------------------------pagination-----------------------
+    page_num = request.GET.get('page')
+    paginator = Paginator(products, 2)
+    page_object = paginator.get_page(page_num)
     # --------------------search with get------------------------------
     if 'search' in request.GET:
         form = SearchForm(request.GET, use_required_attribute=False)
         if form.is_valid():
             data_search = form.cleaned_data['search']
-            page_object = Product.objects.filter(Q(name__icontains=data_search) | Q(information__icontains=data_search))
+            products = Product.objects.filter(Q(name__icontains=data_search) | Q(information__icontains=data_search))
+            # --pagination--
+            page_num = request.GET.get('page')
+            paginator = Paginator(products, 2)
+            page_object = paginator.get_page(page_num)
     # ----------------------------------------------------------------------
     if slug and id:
         selected_cat = get_object_or_404(Category, slug=slug, id=id)
-        page_object = Product.objects.filter(category=selected_cat, available=True)
-    return render(request, 'home/products.html', {'products': page_object, 'category': category})
+        products = Product.objects.filter(category=selected_cat, available=True)
+        # --pagination--
+        page_num = request.GET.get('page')
+        paginator = Paginator(products, 2)
+        page_object = paginator.get_page(page_num)
+    return render(request, 'home/products.html', {'products': page_object, 'category': category, 'page_num': page_num})
 
 
 def product_detail(request, id):
