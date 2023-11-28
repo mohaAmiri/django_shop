@@ -6,9 +6,8 @@
 {% endblock %}
 
 {% block body %}
-
+    {#    ------------------------------- categories --------------------------------#}
     {% for data in category %}
-        <!-- Example single danger button -->
         <div class="btn-group">
             <a href="{{ data.get_absolute_url }}">{{ data.name }}</a>
             <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
@@ -22,58 +21,117 @@
         </div>
     {% endfor %}
     <div class="row">
-        {% for product in products %}
-            <div class="col-md-4">
-                <h1>{{ product.name }}</h1>
-                <a href="{% url 'home:product-detail' product.id %}">
-                    {% thumbnail product.image '200x200' as img %}
-                        <img src="{{ img.url }}" alt="{{ product.name }}" style="width: 200px;"><br>
-                    {% endthumbnail %}
-                </a>
-                {% if product.discount %}
-                    Price:
-                    <small style="text-decoration: line-through">{{ product.unit_price|intcomma:False }}</small>
-                    <br>
-                    Price with discount: <small>{{ product.total_price|intcomma:False }}</small>
-                {% else %}
-                    Price:<small>{{ product.total_price|intcomma:False }}</small>
-                {% endif %}
+        {#-----------side filters-------------#}
+        <div class="col-md-3">
+            <form action="">
+                <label for="">Price: <br>
+                    greater than:<input type="number" name="price_1" min="{{ min_price }}" max="{{ max_price }}"
+                                        value="{{ min_price }}"><br>
+                    less than:<input type="number" name="price_2" min="{{ min_price }}" max="{{ max_price }}"
+                                     value="{{ max_price }}"><br>
+                </label><br>
+                <label for="">Brand: <br>
+                    {{ filter.form.brand }}
+                </label><br>
+                <label for="">Color: <br>
+                    {{ filter.form.color }}
+                </label><br>
+                <label for="">Size: <br>
+                    {{ filter.form.size }}
+                </label><br>
+                {# -----fix join error---#}
+                <div style="display: none">
+                    {{ filter.form.price }}
+                    {{ filter.form.create }}
+                    {{ filter.form.discount }}
+                    {{ filter.form.sell }}
+                    {{ filter.form.favorite }}
+                </div>
+                <button type="submit" class="btn btn-success">Filter</button>
+            </form>
+        </div>
+        {#        ---------------- products ,pagination and top filter ---------------#}
+        <div class="col-md-9">
+            {#     --------------- Top filter ---------------------#}
+            <div class="row">
+                <div>
+                    <form>
+                        <input type="submit" name="price" value="گران ترین">
+                        <input type="submit" name="price" value="ارزان ترین">
+                        <input type="submit" name="create" value="جدیدترین">
+                        <input type="submit" name="discount" value="بیشترین تخفیف">
+                        <input type="submit" name="sell" value="پرفروش ترین">
+                        <input type="submit" name="favorite" value="محبوب ترین">
+                        {# -----fix join error---#}
+                        <div style="display: none">
+                            {{ filter.form.brand }}
+                            {{ filter.form.color }}
+                            {{ filter.form.size }}
+                            {{ filter.form.price_1 }}
+                            {{ filter.form.price_2 }}
+                        </div>
+                    </form>
+                </div>
+                <br>
             </div>
-        {% endfor %}
-        <nav aria-label="Page navigation example">
-            <ul class="pagination my-3">
-                {% if products.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ products.previous_page_number }}">Previous</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ products.previous_page_number }}">
-                            {{ products.previous_page_number }}
+            {#    ----------------------- products and paginations ----------------------#}
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4">
+                        <h1>{{ product.name }}</h1>
+                        <a href="{% url 'home:product-detail' product.id %}">
+                            {% thumbnail product.image '200x200' as img %}
+                                <img src="{{ img.url }}" alt="{{ product.name }}" style="width: 200px;"><br>
+                            {% endthumbnail %}
                         </a>
-                    </li>
-                {% endif %}
+                        {% if product.discount %}
+                            Price:
+                            <small style="text-decoration: line-through">{{ product.unit_price|intcomma:False }}</small>
+                            <br>
+                            Price with discount: <small>{{ product.total_price|intcomma:False }}</small>
+                        {% else %}
+                            Price:<small>{{ product.total_price|intcomma:False }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
 
-                <li class="page-item">
-                    <a class="page-link {% if page_num == page_num %}active{% endif %}"
-                       href="?page={{ products.number }}">
-                        {{ products.number }}
-                    </a>
-                </li>
+                {#    --------------------------------------- Pagination ------------------------------#}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination my-3">
+                        {% if products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ products.previous_page_number }}&{{ data }}">Previous</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ products.previous_page_number }}&{{ data }}">
+                                    {{ products.previous_page_number }}
+                                </a>
+                            </li>
+                        {% endif %}
 
-                {% if products.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}">
-                            {{ products.next_page_number }}
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}">Next</a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link {% if page_num == page_num %}active{% endif %}"
+                               href="?page={{ products.number }}&{{ data }}">
+                                {{ products.number }}
+                            </a>
+                        </li>
 
-                {% endif %}
-            </ul>
-        </nav>
+                        {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ products.next_page_number }}&{{ data }}">
+                                    {{ products.next_page_number }}
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ products.next_page_number }}&{{ data }}">Next</a>
+                            </li>
+
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 {% endblock %}

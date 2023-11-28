@@ -58,6 +58,11 @@ class Product(models.Model):
     # --------------------- for favorites -------------------------
     favorite = models.ManyToManyField(User, blank=True, related_name='fa_user')
     total_favorites = models.IntegerField(default=0)
+    # --------------------- for filters ----------------------
+    brand = models.ForeignKey('Brand', on_delete=models.CASCADE, blank=True, null=True)
+    size = models.ManyToManyField('Size', blank=True)
+    color = models.ManyToManyField('Color', blank=True)
+    sell = models.IntegerField(default=0)
 
 
     def __str__(self):
@@ -91,6 +96,13 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'محصولات'
         verbose_name_plural = 'محصولات'
+
+
+class Brand(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Size(models.Model):

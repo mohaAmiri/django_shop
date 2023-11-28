@@ -29,6 +29,9 @@ def order_create(request):
             for c in cart:
                 ItemOrder.objects.create(order_id=order.id, user_id=request.user.id, product_id=c.product_id,
                                          variant_id=c.variant_id, quantity=c.quantity)
+                # ----for sell in top filter---
+                c.product.sell += c.quantity
+                c.product.save()
             Cart.objects.filter(user_id=request.user.id).delete()
             return redirect('order:order-detail', order.id)
 

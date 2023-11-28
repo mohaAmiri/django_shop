@@ -1,9 +1,12 @@
+from urllib.parse import urlencode
+
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Min, Max
 from django.shortcuts import render, get_object_or_404, redirect
 
 from cart.models import CartForm
+from home.filters import ProductFilter
 from home.forms import SearchForm
 from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery
 
@@ -16,10 +19,24 @@ def home(request):
 def all_products(request, slug=None, id=None):
     products = Product.objects.filter(available=True)  # products
     category = Category.objects.filter(sub_cat=False)
+    # -----------------------------side filter---------------------
+    filter = ProductFilter(request.GET, queryset=products)
+    products = filter.qs
+
+    min = Product.objects.aggregate(unit_price=Min('unit_price'))
+    min_price = int(min['unit_price'])
+    max = Product.objects.aggregate(unit_price=Max('unit_price'))
+    max_price = int(max['unit_price'])
     # ----------------------------pagination-----------------------
     page_num = request.GET.get('page')
     paginator = Paginator(products, 2)
     page_object = paginator.get_page(page_num)
+    # ---fix second filters error---
+    data = request.GET.copy()
+    if 'page' in data:
+        del data['page']
+    # *send data with urlencode
+    # -----------------------------
     # --------------------search with get------------------------------
     if 'search' in request.GET:
         form = SearchForm(request.GET, use_required_attribute=False)
@@ -34,11 +51,16 @@ def all_products(request, slug=None, id=None):
     if slug and id:
         selected_cat = get_object_or_404(Category, slug=slug, id=id)
         products = Product.objects.filter(category=selected_cat, available=True)
+        # ---- filter for categories ----
+        filter = ProductFilter(request.GET, queryset=products)
+        products = filter.qs
         # --pagination--
         page_num = request.GET.get('page')
         paginator = Paginator(products, 2)
         page_object = paginator.get_page(page_num)
-    return render(request, 'home/products.html', {'products': page_object, 'category': category, 'page_num': page_num})
+    return render(request, 'home/products.html', {'products': page_object, 'category': category, 'page_num': page_num,
+                                                  'filter': filter, 'min_price': min_price, 'max_price': max_price,
+                                                  'data': urlencode(data)})
 
 
 def product_detail(request, id):
@@ -119,7 +141,8 @@ def product_comment(request, id):
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             data = comment_form.cleaned_data
-            Comment.objects.create(comment=data['comment'], rate=data['rate'], user_id=request.user.id, product_id=id)
+            Comment.objects.create(comment=data['comment'], rate=data['rate'], user_id=request.user.id,
+                                   product_id=id)
             return redirect(url)
         else:
             return redirect(url)

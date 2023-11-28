@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'taggit',
     'sorl.thumbnail',
     'django_jalali',
+    'django_filters',
     'accounting.apps.AccountingConfig',
     'home.apps.HomeConfig',
     'cart.apps.CartConfig',
