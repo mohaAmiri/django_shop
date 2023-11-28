@@ -6,6 +6,7 @@ import datetime
 from cart.models import Cart
 from order.forms import CouponForm
 from order.models import Order, OrderForm, ItemOrder, Coupon
+import jdatetime
 
 
 def order_detail(request, id):
@@ -35,7 +36,7 @@ def order_create(request):
 @require_POST
 def coupon_order(request, id):
     form = CouponForm(request.POST)
-    time = datetime.datetime.now()
+    time = jdatetime.datetime.now()
     if form.is_valid():
         code = form.cleaned_data['code']
         try:

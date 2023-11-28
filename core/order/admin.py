@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django_jalali.admin.filters import JDateFieldListFilter
 
 from order.models import ItemOrder, Order, Coupon
 
@@ -17,5 +18,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 @admin.register(Coupon)
-class OrderAdmin(admin.ModelAdmin):
+class CouponAdmin(admin.ModelAdmin):
     list_display = ['code', 'discount', 'start', 'end', 'active']
+    # -------------for persian date-------------------
+    list_filter = (
+        ('start', JDateFieldListFilter),
+    )

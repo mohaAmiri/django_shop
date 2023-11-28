@@ -24,6 +24,11 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('home:category', args=[self.slug, self.id])
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'دسته بندی'
+        verbose_name_plural = 'دسته بندی ها'
+
 
 class Product(models.Model):
     VARIANT = (
@@ -31,8 +36,8 @@ class Product(models.Model):
         ('Color', 'color'),
         ('Both', 'Both'),
     )
-    category = models.ManyToManyField(Category, blank=True)
-    name = models.CharField(max_length=200)
+    category = models.ManyToManyField(Category, blank=True, verbose_name='دسته بندی')
+    name = models.CharField(max_length=200, verbose_name='نام محصول')
     amount = models.PositiveIntegerField()
     unit_price = models.PositiveIntegerField()
     discount = models.PositiveIntegerField(blank=True, null=True)
@@ -82,6 +87,11 @@ class Product(models.Model):
             star = round(data['avg'], 1)
         return star
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'محصولات'
+        verbose_name_plural = 'محصولات'
+
 
 class Size(models.Model):
     name = models.CharField(max_length=100)
@@ -89,12 +99,22 @@ class Size(models.Model):
     def __str__(self):
         return self.name
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'سایز'
+        verbose_name_plural = 'سایز'
+
 
 class Color(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'رنگ'
+        verbose_name_plural = 'رنگ'
 
 
 class Variants(models.Model):
@@ -120,6 +140,10 @@ class Variants(models.Model):
             return int(self.unit_price - total)
         return self.total_price
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name_plural = 'Variants'
+
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -139,6 +163,11 @@ class Comment(models.Model):
     def __str__(self):
         return self.product.name
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'کامنت'
+        verbose_name_plural = 'کامنت ها'
+
 
 class CommentForm(ModelForm):
     class Meta:
@@ -156,3 +185,8 @@ class PhotoGallery(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True, null=True)
     image = models.ImageField(upload_to='gallery', blank=True, null=True)
+
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'گالری تصاویر'
+        verbose_name_plural = 'گالری تصاویر'

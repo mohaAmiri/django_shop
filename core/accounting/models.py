@@ -13,6 +13,11 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'پروفایل'
+        verbose_name_plural = 'پروفایل ها'
+
 
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, created, **kwargs):

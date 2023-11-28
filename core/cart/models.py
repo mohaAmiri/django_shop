@@ -11,6 +11,11 @@ class Cart(models.Model):
     def __str__(self):
         return self.user.username
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'سبد خرید'
+        verbose_name_plural = 'سبد خرید'
+
 
 class CartForm(ModelForm):
     class Meta:

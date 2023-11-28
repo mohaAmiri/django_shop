@@ -1,13 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.forms import ModelForm
-
+from django_jalali.db import models as jmodel
 from home.models import Product, Variants
 
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    create = models.DateTimeField(auto_now_add=True)
+    create = jmodel.jDateTimeField(auto_now_add=True)
     paid = models.BooleanField(default=False)
     code = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField()
@@ -19,6 +19,11 @@ class Order(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'سفارشات'
+        verbose_name_plural = 'سفارشات'
 
     def order_price(self):
         total = sum(i.price() for i in self.order_sub.all())
@@ -50,6 +55,11 @@ class ItemOrder(models.Model):
         else:
             return self.product.total_price * self.quantity
 
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'خریداری شده'
+        verbose_name_plural = 'خریداری شده'
+
 
 class OrderForm(ModelForm):
     class Meta:
@@ -60,9 +70,14 @@ class OrderForm(ModelForm):
 class Coupon(models.Model):
     code = models.CharField(max_length=100, unique=True)
     active = models.BooleanField(default=False)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    start = jmodel.jDateTimeField()
+    end = jmodel.jDateTimeField()
     discount = models.IntegerField()
 
     def __str__(self):
         return self.code
+
+    # ------------------------change name of app in admin-------------------------
+    class Meta:
+        verbose_name = 'کد نخفیف'
+        verbose_name_plural = 'کد تخفیف'
