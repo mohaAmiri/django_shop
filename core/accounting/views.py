@@ -20,6 +20,7 @@ from accounting.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProf
 from accounting.models import Profile
 
 # ---------------------verification account with email---------------------
+from home.models import Product
 from order.models import ItemOrder, Order
 
 
@@ -246,3 +247,8 @@ def contact(request):
         form.send(fail_silently=False)
         messages.success(request, 'Message sent successfully', 'success')
     return render(request, 'accounting/contact.html')
+
+
+def product_view(request):
+    product = Product.objects.filter(view=request.user.id).order_by('-views')[:3]
+    return render(request, 'accounting/product_views.html', {'product': product})

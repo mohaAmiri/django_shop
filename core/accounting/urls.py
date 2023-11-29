@@ -19,4 +19,5 @@ urlpatterns = [
     path('favorite/', views.favorite, name='favorite'),
     path('history/', views.history, name='history'),
     path('contact/', views.contact, name='contact'),
+    path('view/', views.product_view, name='product-view'),
 ]

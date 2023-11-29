@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block body %}
+    {% for i in product %}
+        <img src="{{ i.image.url }}" style="width: 150px; height: 150px">
+    {% endfor %}
+{% endblock %}

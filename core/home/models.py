@@ -67,6 +67,9 @@ class Product(models.Model):
     size = models.ManyToManyField('Size', blank=True)
     color = models.ManyToManyField('Color', blank=True)
     sell = models.IntegerField(default=0)
+    # -------------------------count visits--------------------------------
+    view = models.ManyToManyField(User, blank=True, related_name='product_view')
+    num_view = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -240,3 +243,12 @@ def variant_post_saved(sender, instance, created, *args, **kwargs):
     data = instance
     Chart.objects.create(variant=data, unit_price=data.unit_price, update=data.update, name=data.name,
                          size=data.size_variant, color=data.color_variant)
+
+
+class Views(models.Model):
+    ip = models.CharField(max_length=100, blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    create = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.product.name

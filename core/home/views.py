@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from cart.models import CartForm
 from home.filters import ProductFilter
 from home.forms import SearchForm
-from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery, Chart
+from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery, Chart, Views
 
 
 def home(request):
@@ -71,6 +71,16 @@ def product_detail(request, id):
     product_chart = Chart.objects.filter(product_id=id)
     # --for variants --
     variant_chart = Chart.objects.all()
+    # --------------------------count visit------------------------
+    ip = request.META.get('REMOTE_ADDR')
+    view = Views.objects.filter(product_id=product.id, ip=ip)
+    if not view.exists():
+        Views.objects.create(product_id=product.id, ip=ip)
+        product.num_view += 1
+        product.save()
+    # --last visits--
+    if request.user.is_authenticated:
+        product.view.add(request.user)
     # -----------------------------photo gallery---------------------
     gallery = PhotoGallery.objects.filter(product_id=id)
     # ------------------------------like---------------------------
@@ -204,3 +214,6 @@ def favorite(request, product_id):
         product.save()
         is_favorite = True
     return redirect(url)
+
+
+

@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+    <h3>Views:{{ product.num_view }}</h3>
     {#    --------------------------------------favorire section------------------------------------------#}
     {% if request.user.is_authenticated %}
         {% if is_favorite %}
