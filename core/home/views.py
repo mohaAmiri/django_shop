@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from cart.models import CartForm
 from home.filters import ProductFilter
 from home.forms import SearchForm
-from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery
+from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery, Chart
 
 
 def home(request):
@@ -67,6 +67,10 @@ def product_detail(request, id):
     product = get_object_or_404(Product, id=id)
     # --------------------------similar object---------------------
     similar = product.tags.similar_objects()[:2]
+    # ---------------------price chart----------------------------
+    product_chart = Chart.objects.filter(product_id=id)
+    # --for variants --
+    variant_chart = Chart.objects.all()
     # -----------------------------photo gallery---------------------
     gallery = PhotoGallery.objects.filter(product_id=id)
     # ------------------------------like---------------------------
@@ -98,12 +102,13 @@ def product_detail(request, id):
             selected_variant = Variants.objects.get(id=variant[0].id)
         context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar,
                    'is_like': is_like, 'is_unlike': is_unlike, 'comment_form': comment_form, 'comments': comments,
-                   'reply_form': reply_form, 'gallery': gallery, 'cartForm': cart_form, 'is_favorite': is_favorite}
+                   'reply_form': reply_form, 'gallery': gallery, 'cartForm': cart_form, 'is_favorite': is_favorite,
+                   'variant_chart': variant_chart}
         return render(request, 'home/detail.html', context)
     else:
         context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike,
                    'comment_form': comment_form, 'comments': comments, 'reply_form': reply_form, 'gallery': gallery,
-                   'cartForm': cart_form, 'is_favorite': is_favorite}
+                   'cartForm': cart_form, 'is_favorite': is_favorite, 'product_chart': product_chart}
         return render(request, 'home/detail.html', context)
 
 

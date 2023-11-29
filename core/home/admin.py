@@ -1,7 +1,7 @@
 import admin_thumbnails
 from django.contrib import admin
 
-from home.models import Category, Product, Variants, Color, Size, PhotoGallery
+from home.models import Category, Product, Variants, Color, Size, PhotoGallery, Chart
 
 
 class ProductVariantInlines(admin.TabularInline):
@@ -34,6 +34,11 @@ class CategoryAdmin(admin.ModelAdmin):
 class VariantAdmin(admin.ModelAdmin):
     list_display = ['name', 'product_variant', 'size_variant', 'color_variant', 'amount', 'unit_price', 'discount',
                     'total_price']
+
+
+@admin.register(Chart)
+class ChartAdmin(admin.ModelAdmin):
+    list_display = ['name', 'unit_price', 'product', 'variant', 'update']
 
 
 admin.site.register(Size)

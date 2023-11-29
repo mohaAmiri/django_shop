@@ -2,9 +2,12 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Avg
+from django.db.models.signals import post_save
 from django.forms import ModelForm
 from django.urls import reverse
 from taggit.managers import TaggableManager
+from django_jalali.db import models as jmodel
+from django.dispatch import receiver
 
 
 class Category(models.Model):
@@ -40,11 +43,12 @@ class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name='نام محصول')
     amount = models.PositiveIntegerField()
     unit_price = models.PositiveIntegerField()
+    change = models.BooleanField(default=False)
     discount = models.PositiveIntegerField(blank=True, null=True)
     total_price = models.PositiveIntegerField()
     information = RichTextUploadingField(blank=True, null=True)
-    create = models.DateTimeField(auto_now_add=True)
-    update = models.DateTimeField(auto_now=True)
+    create = jmodel.jDateTimeField(auto_now_add=True)
+    update = jmodel.jDateTimeField(auto_now=True)
     image = models.ImageField(upload_to='products')
     available = models.BooleanField(default=True)
     status = models.CharField(null=True, blank=True, max_length=200, choices=VARIANT)
@@ -63,7 +67,6 @@ class Product(models.Model):
     size = models.ManyToManyField('Size', blank=True)
     color = models.ManyToManyField('Color', blank=True)
     sell = models.IntegerField(default=0)
-
 
     def __str__(self):
         return self.name
@@ -131,7 +134,7 @@ class Color(models.Model):
 
 class Variants(models.Model):
     name = models.CharField(max_length=100)
-    update = models.DateTimeField(auto_now=True)
+    update = jmodel.jDateTimeField(auto_now=True)
     product_variant = models.ForeignKey(Product, on_delete=models.CASCADE)
     size_variant = models.ForeignKey(Size, on_delete=models.CASCADE, blank=True, null=True)
     color_variant = models.ForeignKey(Color, on_delete=models.CASCADE, blank=True, null=True)
@@ -162,7 +165,7 @@ class Comment(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     comment = models.TextField()
     rate = models.PositiveIntegerField(default=1)
-    create = models.DateTimeField(auto_now_add=True)
+    create = jmodel.jDateTimeField(auto_now_add=True)
     reply = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='comment_reply_sub')
     is_reply = models.BooleanField(default=False)
     # ------------------like comment----------------
@@ -202,3 +205,38 @@ class PhotoGallery(models.Model):
     class Meta:
         verbose_name = 'گالری تصاویر'
         verbose_name_plural = 'گالری تصاویر'
+
+
+class Chart(models.Model):
+    name = models.CharField(max_length=50, blank=True, null=True)
+    unit_price = models.IntegerField(default=0)
+    update = jmodel.jDateTimeField(auto_now=True)
+    color = models.CharField(max_length=50, blank=True, null=True)
+    size = models.CharField(max_length=50, blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='pr_update', blank=True, null=True)
+    variant = models.ForeignKey(Variants, on_delete=models.CASCADE, related_name='v_update', blank=True, null=True)
+
+    # ***add update with jalali to variant and product models
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'نمودار قیمت'
+        verbose_name_plural = 'نمودار قیمت'
+
+
+@receiver(post_save, sender=Product)
+def product_post_saved(sender, instance, created, *args, **kwargs):
+    data = instance
+    if data.change is True:
+        Chart.objects.create(product=data, unit_price=data.unit_price, update=data.update, name=data.name)
+        data.change = False
+        data.save()
+
+
+@receiver(post_save, sender=Variants)
+def variant_post_saved(sender, instance, created, *args, **kwargs):
+    data = instance
+    Chart.objects.create(variant=data, unit_price=data.unit_price, update=data.update, name=data.name,
+                         size=data.size_variant, color=data.color_variant)

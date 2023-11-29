@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load jformat %}
 {% block title %}
     Detail
 {% endblock %}
@@ -117,10 +117,7 @@
             <button class="btn btn-success" type="submit">Send Comment</button>
         </form>
     {% endif %}
-
     <br>
-
-
     {% for com in comments %}
         <div class="card p-2 m-1 rounded-3" style="background-color: lightblue">
             <div class="p-2 m-2">
@@ -148,4 +145,93 @@
 
         </div>
     {% endfor %}
+    {#------------------------------------------------------to show chart-------------------------------------------#}
+    <div class="row">
+        <canvas id="myChart" width="600" height="300"></canvas>
+    </div>
+    {#----------------------#}
+    {% block script %}
+        {% if product.status is not None %}
+            <script>
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [{% for i in variant_chart %}{% if selected_variant.id == i.variant.id %}'{{ i.update | jformat:"%A %d %B %Y" }}'{% endif %}, {% endfor %}],
+                        datasets: [{
+                            label: 'قیمت',
+                            data: [{% for i in variant_chart %}{% if selected_variant.id == i.variant.id %}{{ i.unit_price }}{% endif %}, {% endfor %}],
+                            backgroundColor: [
+                                {% for i in variant_chart %}'{{ i.color }}',{% endfor %}
+                            ],
+                            borderColor: [
+                                {% for i in variant_chart %}'{{ i.color }}',{% endfor %}
+                            ],
+                            borderWidth: 1,
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+            {#----render part---#}
+            <script>
+                const myChart = new Chart(
+                    document.getElementById('myChart'),
+                    config
+                );
+            </script>
+            {#-----------------#}
+        {% else %}
+            <script>
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [{% for i in product_chart %}'{{ i.update | jformat:"%A %d %B %Y" }}',{% endfor %}],
+                        datasets: [{
+                            label: 'تغییرات قیمت',
+                            data: [{% for i in product_chart %}{{ i.unit_price }}, {% endfor %}],
+                            backgroundColor: [
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(0, 0, 0, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+            {#----render part---#}
+            <script>
+                const myChart = new Chart(
+                    document.getElementById('myChart'),
+                    config);
+            </script>
+            {#-----------------#}
+        {% endif %}
+    {% endblock %}
 {% endblock %}
