@@ -8,12 +8,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from cart.models import CartForm
 from home.filters import ProductFilter
 from home.forms import SearchForm
-from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery, Chart, Views
+from home.models import Category, Product, Variants, Comment, ReplyForm, CommentForm, PhotoGallery, Chart, Views, \
+    SliderFirst
 
 
 def home(request):
     category = Category.objects.filter(sub_cat=False)
-    return render(request, 'home/home.html', {'category': category})
+    slider_f = SliderFirst.objects.all()
+    return render(request, 'home/home.html', {'category': category, 'slider_f': slider_f})
 
 
 def all_products(request, slug=None, id=None):
@@ -214,6 +216,3 @@ def favorite(request, product_id):
         product.save()
         is_favorite = True
     return redirect(url)
-
-
-

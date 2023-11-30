@@ -1,7 +1,7 @@
 import admin_thumbnails
 from django.contrib import admin
 
-from home.models import Category, Product, Variants, Color, Size, PhotoGallery, Chart
+from home.models import Category, Product, Variants, Color, Size, PhotoGallery, Chart, SliderFirst
 
 
 class ProductVariantInlines(admin.TabularInline):
@@ -43,3 +43,4 @@ class ChartAdmin(admin.ModelAdmin):
 
 admin.site.register(Size)
 admin.site.register(Color)
+admin.site.register(SliderFirst)

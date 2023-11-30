@@ -9,8 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(mod)=0sm*jqdxgds8pmsh)x5od9g7%#l8f_2+f^#puecr&c0e'
 
 DEBUG = True
-
 ALLOWED_HOSTS = []
+
+# to see 404 Page
+# DEBUG = False
+# ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

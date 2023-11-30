@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load jformat %}
+{% load humanize %}
 {% block title %}
     Detail
 {% endblock %}
@@ -24,7 +25,7 @@
     <h4>Rate:{{ product.average }}</h4><br>
     {#    ------------------------------------------------------------------------------------------------#}
     {% if product.status == None %}
-        <small>price: {{ product.total_price }}</small><br>
+        <small>price: {{ product.total_price | intcomma:False }}</small><br>
     {% else %}
         {#  ------------------  variants  -------------------  #}
         {% if product.status == 'Size' %}

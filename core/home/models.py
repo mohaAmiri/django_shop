@@ -252,3 +252,15 @@ class Views(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class SliderFirst(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='slider')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'اسلایدر'
+        verbose_name_plural = 'اسلایدر'
