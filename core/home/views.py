@@ -39,12 +39,16 @@ def all_products(request, slug=None, id=None):
         del data['page']
     # *send data with urlencode
     # -----------------------------
+    form = SearchForm(use_required_attribute=False)
     # --------------------search with get------------------------------
     if 'search' in request.GET:
         form = SearchForm(request.GET, use_required_attribute=False)
         if form.is_valid():
             data_search = form.cleaned_data['search']
             products = Product.objects.filter(Q(name__icontains=data_search) | Q(information__icontains=data_search))
+            # ------ filter ----------
+            filter = ProductFilter(request.GET, queryset=products)
+            products = filter.qs
             # --pagination--
             page_num = request.GET.get('page')
             paginator = Paginator(products, 2)
@@ -62,7 +66,7 @@ def all_products(request, slug=None, id=None):
         page_object = paginator.get_page(page_num)
     return render(request, 'home/products.html', {'products': page_object, 'category': category, 'page_num': page_num,
                                                   'filter': filter, 'min_price': min_price, 'max_price': max_price,
-                                                  'data': urlencode(data)})
+                                                  'form': form, 'data': urlencode(data)})
 
 
 def product_detail(request, id):
