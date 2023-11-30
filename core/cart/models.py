@@ -21,3 +21,18 @@ class CartForm(ModelForm):
     class Meta:
         model = Cart
         fields = ['quantity']
+
+
+class Compare(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    session_key = models.CharField(max_length=300, blank=True, null=True)
+
+    def __str__(self):
+        return self.product.name
+
+
+class CompareForm(ModelForm):
+    class Meta:
+        model = Compare
+        fields = ['product']

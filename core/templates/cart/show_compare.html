@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block body %}
+    <h1>Compare</h1>
+    {% for i in data %}
+        {{ i.product.name }}
+        <a href="{% url 'cart:remove-compare' i.id %}">
+            <button class="btn btn-danger">Remove</button>
+        </a>
+        <br>
+        <img src="{{ i.product.image.url }}" alt="{{ i.product.name }}" style="width: 200px;">
+        <br><br>
+    {% endfor %}
+{% endblock %}

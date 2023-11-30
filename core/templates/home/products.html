@@ -93,6 +93,12 @@
                             Price:<small>{{ product.total_price|intcomma:False }}</small>
                         {% endif %}
                     </div>
+                    {#----------------compare section---------------------#}
+                    <form action="{% url 'cart:compare' product.id %}">
+                        <input type="hidden" value="{{ product.id }}" name="product">
+                        <button type="submit" class="btn btn-danger">Compare</button>
+                    </form>
+                    {#-----------------------------------------------------#}
                 {% endfor %}
 
                 {#    --------------------------------------- Pagination ------------------------------#}

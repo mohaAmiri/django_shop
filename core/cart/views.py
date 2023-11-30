@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
-from cart.models import Cart, CartForm
+from cart.models import Cart, CartForm, Compare
 from home.models import Product, Variants
 
 
@@ -90,4 +91,41 @@ def remove_single(request, id):
     else:
         cart.quantity -= 1
         cart.save()
+    return redirect(url)
+
+
+def compare(request, id):
+    url = request.META.get('HTTP_REFERER')
+    if request.user.is_authenticated:
+        item = get_object_or_404(Product, id=id)
+        qs = Compare.objects.filter(user_id=request.user.id, product_id=id)
+        if qs.exists():
+            messages.warning(request, 'already exist in compare list', 'warning')
+        else:
+            Compare.objects.create(user_id=request.user.id, product_id=item.id, session_key=None)
+    else:
+        item = get_object_or_404(Product, id=id)
+        qs = Compare.objects.filter(user_id=None, product_id=id, session_key=request.session.session_key)
+        if qs.exists():
+            messages.warning(request, 'session already exist in compare list', 'warning')
+        else:
+            if not request.session.session_key:
+                request.session.create()
+            Compare.objects.create(user_id=None, product_id=item.id, session_key=request.session.session_key)
+    return redirect(url)
+
+
+def show_compare(request):
+    if request.user.is_authenticated:
+        data = Compare.objects.filter(user_id=request.user.id)
+        return render(request, 'cart/show_compare.html', {'data': data})
+    else:
+        data = Compare.objects.filter(session_key__exact=request.session.session_key, user_id=None)
+        return render(request, 'cart/show_compare.html', {'data': data})
+
+
+def remove_compare(request, id):
+    url = request.META.get('HTTP_REFERER')
+    compare_item = Compare.objects.get(id=id)
+    compare_item.delete()
     return redirect(url)
