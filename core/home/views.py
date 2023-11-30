@@ -113,13 +113,21 @@ def product_detail(request, id):
             variant = Variants.objects.filter(product_variant_id=id)
             var_id = request.POST.get('select')
             selected_variant = Variants.objects.get(id=var_id)
+            # ---------add both size & color-------
+            colors = Variants.objects.filter(product_variant_id=id, size_variant_id=selected_variant.size_variant_id)
+            size = Variants.objects.filter(product_variant_id=id).distinct('size_variant_id')
         else:
             variant = Variants.objects.filter(product_variant_id=id)
             selected_variant = Variants.objects.get(id=variant[0].id)
+            # ---------add both size & color-------
+            colors = Variants.objects.filter(product_variant_id=id).distinct('color_variant_id').order_by(
+                '-color_variant_id')
+            size = Variants.objects.filter(product_variant_id=id).distinct('size_variant_id')
+
         context = {'product': product, 'variant': variant, 'selected_variant': selected_variant, 'similar': similar,
                    'is_like': is_like, 'is_unlike': is_unlike, 'comment_form': comment_form, 'comments': comments,
                    'reply_form': reply_form, 'gallery': gallery, 'cartForm': cart_form, 'is_favorite': is_favorite,
-                   'variant_chart': variant_chart}
+                   'variant_chart': variant_chart, 'colors': colors, 'size': size}
         return render(request, 'home/detail.html', context)
     else:
         context = {'product': product, 'similar': similar, 'is_like': is_like, 'is_unlike': is_unlike,

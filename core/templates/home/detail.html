@@ -28,7 +28,29 @@
         <small>price: {{ product.total_price | intcomma:False }}</small><br>
     {% else %}
         {#  ------------------  variants  -------------------  #}
-        {% if product.status == 'Size' %}
+        {% if product.status == 'Both' %}
+            <form method="post">
+                {% csrf_token %}
+                {% for data in size %}
+                    <input type="radio" name="select" value="{{ data.id }}"
+                           {% if data.size_variant.id == selected_variant.size_variant.id %}checked{% endif %}
+                           onchange="this.form.submit();"/>
+                    <a style="text-decoration: none">{{ data.size_variant }}</a>
+                {% endfor %}
+            </form>
+
+
+            <form method="post">
+                {% csrf_token %}
+                {% for data in colors %}
+                    <input type="radio" name="select" value="{{ data.id }}"
+                           {% if data.id == selected_variant.id %}checked{% endif %}
+                           onchange="this.form.submit();"/>
+                    <a style="text-decoration: none">{{ data.color_variant }}</a>
+                {% endfor %}
+            </form>
+
+        {% elif product.status == 'Size' %}
             <form method="post">
                 {% csrf_token %}
                 {% for data in variant %}
