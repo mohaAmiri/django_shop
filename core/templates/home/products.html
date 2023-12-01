@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
 {% load humanize %}
+{% load url_template_tag %}
+
 {% block title %}
     Products
 {% endblock %}
@@ -111,11 +113,11 @@
                         {% if products.has_previous %}
                             <li class="page-item">
                                 <a class="page-link"
-                                   href="?page={{ products.previous_page_number }}&{{ data }}">Previous</a>
+                                   href="{% filter_url products.previous_page_number 'page' request.GET.urlencode %}">Previous</a>
                             </li>
                             <li class="page-item">
                                 <a class="page-link"
-                                   href="?page={{ products.previous_page_number }}&{{ data }}">
+                                   href="{% filter_url products.previous_page_number 'page' request.GET.urlencode %}">
                                     {{ products.previous_page_number }}
                                 </a>
                             </li>
@@ -123,19 +125,21 @@
 
                         <li class="page-item">
                             <a class="page-link {% if page_num == page_num %}active{% endif %}"
-                               href="?page={{ products.number }}&{{ data }}">
+                               href="{% filter_url products.number 'page' request.GET.urlencode %}">
                                 {{ products.number }}
                             </a>
                         </li>
 
                         {% if products.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ products.next_page_number }}&{{ data }}">
+                                <a class="page-link"
+                                   href="{% filter_url products.next_page_number 'page' request.GET.urlencode %}">
                                     {{ products.next_page_number }}
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ products.next_page_number }}&{{ data }}">Next</a>
+                                <a class="page-link"
+                                   href="{% filter_url products.next_page_number 'page' request.GET.urlencode %}">Next</a>
                             </li>
 
                         {% endif %}

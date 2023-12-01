@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load jformat %}
 {% load humanize %}
+{% load extra_filter %}
+
 {% block title %}
     Detail
 {% endblock %}
@@ -150,7 +152,7 @@
                     likes:&nbsp;<small>{{ com.total_like }}</small>
                 {% endif %}
             </div>
-            <h3>{{ com.user.username }}</h3>
+            <h3>{{ com.user.username | upper_name }}</h3>
             <p>{{ com.comment }}</p>
             <small>rate: {{ com.rate }}</small>
             {% if user.is_authenticated %}

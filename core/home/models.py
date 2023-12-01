@@ -1,3 +1,4 @@
+from django.utils import timezone
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
@@ -102,6 +103,16 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'محصولات'
         verbose_name_plural = 'محصولات'
+
+    # ---------------------for save method----------------
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_price = self.unit_price
+
+    def save(self, *args, **kwargs):
+        if self.old_price != self.unit_price:
+            self.update = timezone.now()
+        super().save(*args, **kwargs)
 
 
 class Brand(models.Model):
