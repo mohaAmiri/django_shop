@@ -24,10 +24,12 @@ class PhotoGalleryInline(admin.TabularInline):
 
 
 @admin.register(Product)
-class CategoryAdmin(admin.ModelAdmin):
+class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'amount', 'unit_price', 'discount', 'total_price', 'available']
     raw_id_fields = ('category',)
     inlines = [ProductVariantInlines, PhotoGalleryInline]
+    # ------for chart in admin --------
+    change_list_template = 'home/change.html'
 
 
 @admin.register(Variants)
