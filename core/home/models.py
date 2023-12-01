@@ -114,6 +114,10 @@ class Product(models.Model):
             self.update = timezone.now()
         super().save(*args, **kwargs)
 
+    # -------for site map---------
+    def get_absolute_url(self):
+        return reverse('home:product-detail', args=[self.id])
+
 
 class Brand(models.Model):
     name = models.CharField(max_length=100)
